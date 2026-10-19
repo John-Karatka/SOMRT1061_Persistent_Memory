@@ -12,7 +12,6 @@
 const char *AppName = "RAM Logging Example";
 
 uint32_t Task_milliSecondTaskStack[USER_TASK_STK_SIZE];
-uint32_t Task_snapshotTaskStack[USER_TASK_STK_SIZE];
 
 uint32_t loopCount_seconds = 0;
 uint32_t loopCount_milliSeconds = 0;
@@ -35,30 +34,6 @@ void Task_milliSecondTask(void *pd)
     }
 }
 
-/*
- * This task will log snapshot data and log it into RAM
- */
-void Task_snapshotTask(void *pd) {
-
-	SysLog("Starting snapshot task...");
-	static DelayObject delay;
-
-	/*
-	 * Saves snapshot data
-	 */
-	while(1) {
-		snapshot.hfsr  = SCB->HFSR;
-		snapshot.dfsr  = SCB->DFSR;
-		snapshot.afsr  = SCB->AFSR;
-		snapshot.mmfar = SCB->MMFAR;
-		snapshot.bfar  = SCB->BFAR;
-		snapshot.memFaultValid = ((SRC->SRSR) & SCB_CFSR_MMARVALID_Msk);
-		snapshot.busFaultValid = ((SRC->SRSR) & SCB_CFSR_BFARVALID_Msk);
-		delay.DelayUsec(100); 											//10 millisecond delay
-	}
-}
-
-
 void UserMain(void *pd)
 {
     int returnCode;
@@ -75,10 +50,10 @@ void UserMain(void *pd)
 		"SecondsCounter"
 	};
 
-	runFirstCheckReport(startingNames);	//Check if this is the first reset
+	runFirstCheckReport(startingNames, 1);	//Check if this is the first reset
 
 	/*
-	 * Create tasks
+	 * Create millisecond task
 	 */
     SysLog("Creating Millisecond Counter Task...");
     returnCode = OSTaskCreatewName(Task_milliSecondTask,                            // Task function name
@@ -91,18 +66,6 @@ void UserMain(void *pd)
         SysLog("Millisecond task creation successful");
     else
         SysLog("*** Error creating millisecond task: status = %d", returnCode);
-
-    SysLog("Creating Snapshot Task...");
-	returnCode = OSTaskCreatewName(Task_snapshotTask,                            // Task function name
-								   NULL,                         				 // Optional parameter, NULL if not used
-								   &Task_snapshotTaskStack[USER_TASK_STK_SIZE],  // Top of task stack
-								   Task_snapshotTaskStack,                       // Bottom of task stack
-								   OSGetNextPrio(OSNextPrio::Above),             // Priority
-								   "Task RAM Debug");                          	 // Name
-	if (returnCode == OS_NO_ERR)
-		SysLog("Snapshot task creation successful");
-	else
-		SysLog("*** Error creating snapshot task: status = %d", returnCode);
 
 
     /*

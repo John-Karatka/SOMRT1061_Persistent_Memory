@@ -54,6 +54,11 @@ extern volatile debugStruct_t debugStruct;
 extern volatile FaultSnapshot snapshot;
 //----------------------------------------------------------------
 
-void runFirstCheckReport(debugNames_t startingNames);
+/*
+ * @brief: Runs a check to see if any memory is saved to RAM and starts the snapshot task
+ * @param startingNAmes: Defines the data that should be stored with names to print to debug
+ * @param snapshotTaskDelay_ms: Delay between recording snapshot data
+ */
+void runFirstCheckReport(debugNames_t startingNames, unsigned int snapshotTaskDelay_ms);
 
 #endif
