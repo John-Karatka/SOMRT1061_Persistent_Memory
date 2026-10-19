@@ -8,7 +8,6 @@ __attribute__((section(".noinit"))) volatile uint32_t first_reset_check_RAM;
 __attribute__((section(".noinit"))) volatile uint32_t reset_count_RAM;
 __attribute__((section(".noinit"))) volatile debugStruct_t debugStruct;
 __attribute__((section(".noinit"))) volatile FaultSnapshot snapshot;
-__attribute__((section(".noinit"))) volatile bool snapshotRunning;
 
 uint32_t Task_snapshotTaskStack[USER_TASK_STK_SIZE];
 
@@ -43,10 +42,8 @@ void startSnapshotLogging(unsigned int delay) {
 								   Task_snapshotTaskStack,                       // Bottom of task stack
 								   OSGetNextPrio(OSNextPrio::Above),             // Priority
 								   "Task RAM Debug");                          	 // Name
-	if (returnCode == OS_NO_ERR) {
+	if (returnCode == OS_NO_ERR)
 		SysLog("Snapshot task creation successful");
-		snapshotRunning = true;
-	}
 	else
 		SysLog("*** Error creating snapshot task: status = %d", returnCode);
 }
@@ -133,7 +130,6 @@ void runFirstCheckReport(debugNames_t startingNames, unsigned int snapshotTaskDe
 		if (debugStruct.debug_10.name != "unnamed")
 			SysLog("%s - %lu", debugStruct.debug_10.name, debugStruct.debug_10.value);
 
-		if(snapshotRunning) {
 			SysLog("Snapshot report:");
 			SysLog("HardFault register - %lu", snapshot.hfsr);
 			SysLog("DebugFault register - %lu", snapshot.dfsr);
@@ -151,7 +147,6 @@ void runFirstCheckReport(debugNames_t startingNames, unsigned int snapshotTaskDe
 			else {
 				SysLog("No BusFault errors");
 			}
-		}
 	}
 	SysLog("--------------END DEBUG REPORT------------------");
 	startSnapshotLogging(snapshotTaskDelay_ms);
