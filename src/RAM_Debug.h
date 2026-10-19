@@ -1,52 +1,6 @@
 #ifndef RAM_DEBUG_H_
 #define RAM_DEBUG_H_
 
-/*
- * !!THIS REQUIRES A NEW LINKER FILE THAT CAN BE FOUND IN THIS FOLDER!!
- * Go to properties -> C/C++ Build -> GNU C/C++ Linker -> Miscellaneous
- * Set it to this:
-	-Wl,-n -T${ProjDirPath}/wam-v-22-mre-firmware-libraries/include/Debug/SOMRT1061_custom_OPT.ld -Wl,-R${NNDK_ROOT}/platform/${PLATFORM}/lib/sys.ld -Wl,--cref
- *
- * HOW TO USE:
- * Define a local debugNames_t in your code with the names you want to give to the values 1 - 5
- * Call runFirstCheckReport() with your assigned naming convention before your main loop
- * Set the values in debugStruct during your main loop according to how you named them
- * You do not need to use all 5 values. More can also be added if needed
- *
- * If runFirstCheckReport is run for the first time it will set the names associated with the values
- * If runFirstCheckReport finds available data it will not write anything and only read
- *
- *
-
- Example code:
-//---------------------------------------------------------------------
-	//Initialization
-	init() {
-	//Declare names for the values you're writing during main loop
-	debugNames_t startingNames {
-		"loopCount",
-		"lastHeartbeatMs",
-		"maxLoopoDtMs",
-		"lastLoopMs",
-		"tempDegC"
-	};
-
-	//Check if this is the first reset
-	runFirstCheckReport(startingNames);
-	}
-
-	//Main loop
-	mainLooop() {
-		//Set values during main loop
-	    debugStruct.debug_1.value = (int32_t)loopCount;
-        debugStruct.debug_2.value = (int32_t)lastHeartbeatMs;
-        debugStruct.debug_3.value = (int32_t)maxLoopDtMs;
-        debugStruct.debug_4.value = (int32_t)lastLoopMs;
-        debugStruct.debug_5.value = (int32_t)tempDegC;
-	}
- //---------------------------------------------------------------------
- */
-
 #include <stdint.h>
 
 struct FaultSnapshot
