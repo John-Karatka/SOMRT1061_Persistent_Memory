@@ -9,6 +9,8 @@
 
 #include "RAM_Debug.h"
 
+using namespace RAM_debug;
+
 const char *AppName = "RAM Logging Example";
 
 uint32_t Task_milliSecondTaskStack[USER_TASK_STK_SIZE];
